@@ -1,0 +1,14 @@
+[versions]
+agp = "8.2.0-alpha02"
+kotlin = "1.8.21"
+benManes = "0.46.0"
+
+androidx-wear-watchface = "1.1.1"
+
+[plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+benManes = { id = "com.github.ben-manes.versions", version.ref = "benManes" }
+
+[libraries]
+wear-watchface = { module = "androidx.wear.watchface:watchface", version.ref = "androidx-wear-watchface" }

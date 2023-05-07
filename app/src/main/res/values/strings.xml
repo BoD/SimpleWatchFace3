@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SimpleWatchFace3</string>
+    <string name="watchface_name">@string/app_name</string>
+    <string name="watchface_configureActivity_title">Configure</string>
+</resources>
