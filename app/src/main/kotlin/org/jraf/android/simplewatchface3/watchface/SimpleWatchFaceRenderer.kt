@@ -32,6 +32,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.view.SurfaceHolder
 import androidx.wear.watchface.CanvasType
+import androidx.wear.watchface.DrawMode
 import androidx.wear.watchface.Renderer
 import androidx.wear.watchface.WatchState
 import androidx.wear.watchface.style.CurrentUserStyleRepository
@@ -71,6 +72,14 @@ class SimpleWatchFaceRenderer(
         strokeCap = Paint.Cap.ROUND
     }
 
+    override fun renderHighlightLayer(
+        canvas: Canvas,
+        bounds: Rect,
+        zonedDateTime: ZonedDateTime,
+        sharedAssets: SharedAssets,
+    ) {
+    }
+
     override fun render(
         canvas: Canvas,
         bounds: Rect,
@@ -93,9 +102,6 @@ class SimpleWatchFaceRenderer(
         val secondRotation = second * 6F
         val minuteRotation = minute * 6F + (second / 60F) * 6F
         val hourRotation = hour * 30F + (minute / 60F) * 30F
-
-        val centerX = bounds.exactCenterX()
-        val centerY = bounds.exactCenterY()
 
         canvas.save()
 
@@ -124,23 +130,18 @@ class SimpleWatchFaceRenderer(
         )
 
         // Second
-        handPaint.color = 0xFF0000FF.toInt()
-        handPaint.strokeWidth = SECOND_HAND_WIDTH_RATIO * bounds.height()
-        canvas.rotate(secondRotation - minuteRotation, centerX, centerY)
-        canvas.drawLine(
-            centerX,
-            centerY + SECOND_HAND_LENGTH_RATIO * (bounds.height() / 20),
-            centerX,
-            centerY - SECOND_HAND_LENGTH_RATIO * (bounds.height() / 2),
-            handPaint
-        )
+        if (renderParameters.drawMode == DrawMode.INTERACTIVE) {
+            handPaint.color = 0xFF0000FF.toInt()
+            handPaint.strokeWidth = SECOND_HAND_WIDTH_RATIO * bounds.height()
+            canvas.rotate(secondRotation - minuteRotation, centerX, centerY)
+            canvas.drawLine(
+                centerX,
+                centerY + SECOND_HAND_LENGTH_RATIO * (bounds.height() / 20),
+                centerX,
+                centerY - SECOND_HAND_LENGTH_RATIO * (bounds.height() / 2),
+                handPaint
+            )
+        }
     }
 
-    override fun renderHighlightLayer(
-        canvas: Canvas,
-        bounds: Rect,
-        zonedDateTime: ZonedDateTime,
-        sharedAssets: SharedAssets,
-    ) {
-    }
 }
