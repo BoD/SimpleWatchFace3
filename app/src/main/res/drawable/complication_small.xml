@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<drawable xmlns:app="http://schemas.android.com/apk/res-auto"
+    class="androidx.wear.watchface.complications.rendering.ComplicationDrawable"
+    app:borderStyle="solid">
+    <ambient app:borderStyle="none" />
+</drawable>

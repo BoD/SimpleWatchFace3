@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2023-present Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2017-present Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,23 +22,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.jraf.android.simplewatchface3
 
-package org.jraf.android.simplewatchface3.watchface
+import android.app.Application
+import org.jraf.android.simplewatchface3.util.initLogging
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.lifecycle.lifecycleScope
-import androidx.wear.watchface.editor.EditorSession
-import kotlinx.coroutines.launch
-
-class SimpleWatchFaceConfigurationActivity : ComponentActivity() {
-    private lateinit var editorSession: EditorSession
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycleScope.launch {
-            editorSession = EditorSession.createOnWatchEditorSession(this@SimpleWatchFaceConfigurationActivity)
-            editorSession.openComplicationDataSourceChooser(0)
-        }
+class SimpleWatchFaceApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        initLogging()
     }
 }

@@ -32,10 +32,14 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.view.SurfaceHolder
 import androidx.wear.watchface.CanvasType
+import androidx.wear.watchface.ComplicationSlotsManager
 import androidx.wear.watchface.DrawMode
 import androidx.wear.watchface.Renderer
 import androidx.wear.watchface.WatchState
+import androidx.wear.watchface.complications.rendering.CanvasComplicationDrawable
+import androidx.wear.watchface.complications.rendering.ComplicationDrawable
 import androidx.wear.watchface.style.CurrentUserStyleRepository
+import org.jraf.android.simplewatchface3.util.drawableId
 import java.time.ZonedDateTime
 
 private const val INTERACTIVE_DRAW_MODE_UPDATE_DELAY_MILLIS = 1000L
@@ -53,6 +57,7 @@ class SimpleWatchFaceRenderer(
     surfaceHolder: SurfaceHolder,
     currentUserStyleRepository: CurrentUserStyleRepository,
     watchState: WatchState,
+    private val complicationSlotsManager: ComplicationSlotsManager,
 ) : Renderer.CanvasRenderer2<SimpleWatchFaceRenderer.SharedAssets>(
     surfaceHolder = surfaceHolder,
     currentUserStyleRepository = currentUserStyleRepository,
@@ -86,15 +91,36 @@ class SimpleWatchFaceRenderer(
         zonedDateTime: ZonedDateTime,
         sharedAssets: SharedAssets,
     ) {
-        drawBackground(canvas, bounds)
-        drawHands(canvas, bounds, zonedDateTime)
+        drawBackground(canvas)
+        drawComplications(canvas, zonedDateTime)
+        drawHands(canvas, zonedDateTime)
     }
 
-    private inline fun drawBackground(canvas: Canvas, bounds: Rect) {
-        canvas.drawColor(0xFF000000.toInt())
+    private inline fun drawBackground(canvas: Canvas) {
+        canvas.drawColor(0xFF202000.toInt())
     }
 
-    private inline fun drawHands(canvas: Canvas, bounds: Rect, zonedDateTime: ZonedDateTime) {
+    private inline fun drawComplications(canvas: Canvas, zonedDateTime: ZonedDateTime) {
+        for ((_, complicationSlot) in complicationSlotsManager.complicationSlots) {
+            if (complicationSlot.enabled) {
+                val renderer = complicationSlot.renderer as CanvasComplicationDrawable
+                val complicationType = complicationSlot.complicationData.value.type
+                renderer.drawable =
+                    ComplicationDrawable.getDrawable(
+                        context = renderer.drawable.context!!,
+                        id = complicationType.drawableId()
+                    )!!
+                        .apply {
+                            activeStyle.borderColor = 0xFFFF0000.toInt()
+                            activeStyle.rangedValuePrimaryColor = 0xFFFF0000.toInt()
+                            activeStyle.rangedValueSecondaryColor = 0x4DFF0000
+                        }
+                complicationSlot.render(canvas, zonedDateTime, renderParameters)
+            }
+        }
+    }
+
+    private inline fun drawHands(canvas: Canvas, zonedDateTime: ZonedDateTime) {
         val second = zonedDateTime.second
         val minute = zonedDateTime.minute
         val hour = zonedDateTime.hour
@@ -107,38 +133,38 @@ class SimpleWatchFaceRenderer(
 
         // Hour
         handPaint.color = 0xFFFF0000.toInt()
-        handPaint.strokeWidth = HOUR_HAND_WIDTH_RATIO * bounds.height()
+        handPaint.strokeWidth = HOUR_HAND_WIDTH_RATIO * screenBounds.height()
         canvas.rotate(hourRotation, centerX, centerY)
         canvas.drawLine(
             centerX,
             centerY,
             centerX,
-            centerY - HOUR_HAND_LENGTH_RATIO * (bounds.height() / 2),
+            centerY - HOUR_HAND_LENGTH_RATIO * (screenBounds.height() / 2),
             handPaint
         )
 
         // Minute
         handPaint.color = 0xFF00FF00.toInt()
-        handPaint.strokeWidth = MINUTE_HAND_WIDTH_RATIO * bounds.height()
+        handPaint.strokeWidth = MINUTE_HAND_WIDTH_RATIO * screenBounds.height()
         canvas.rotate(minuteRotation - hourRotation, centerX, centerY)
         canvas.drawLine(
             centerX,
             centerY,
             centerX,
-            centerY - MINUTE_HAND_LENGTH_RATIO * (bounds.height() / 2),
+            centerY - MINUTE_HAND_LENGTH_RATIO * (screenBounds.height() / 2),
             handPaint
         )
 
         // Second
         if (renderParameters.drawMode == DrawMode.INTERACTIVE) {
             handPaint.color = 0xFF0000FF.toInt()
-            handPaint.strokeWidth = SECOND_HAND_WIDTH_RATIO * bounds.height()
+            handPaint.strokeWidth = SECOND_HAND_WIDTH_RATIO * screenBounds.height()
             canvas.rotate(secondRotation - minuteRotation, centerX, centerY)
             canvas.drawLine(
                 centerX,
-                centerY + SECOND_HAND_LENGTH_RATIO * (bounds.height() / 20),
+                centerY + SECOND_HAND_LENGTH_RATIO * (screenBounds.height() / 20),
                 centerX,
-                centerY - SECOND_HAND_LENGTH_RATIO * (bounds.height() / 2),
+                centerY - SECOND_HAND_LENGTH_RATIO * (screenBounds.height() / 2),
                 handPaint
             )
         }

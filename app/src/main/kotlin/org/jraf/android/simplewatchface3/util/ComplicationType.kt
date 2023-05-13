@@ -23,22 +23,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jraf.android.simplewatchface3.watchface
+package org.jraf.android.simplewatchface3.util
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.lifecycle.lifecycleScope
-import androidx.wear.watchface.editor.EditorSession
-import kotlinx.coroutines.launch
+import androidx.annotation.DrawableRes
+import androidx.wear.watchface.complications.data.ComplicationExperimental
+import androidx.wear.watchface.complications.data.ComplicationType
+import org.jraf.android.simplewatchface3.R
 
-class SimpleWatchFaceConfigurationActivity : ComponentActivity() {
-    private lateinit var editorSession: EditorSession
+@OptIn(ComplicationExperimental::class)
+private val BIG_COMPLICATION_STYLES = setOf(ComplicationType.LONG_TEXT, ComplicationType.LIST)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycleScope.launch {
-            editorSession = EditorSession.createOnWatchEditorSession(this@SimpleWatchFaceConfigurationActivity)
-            editorSession.openComplicationDataSourceChooser(0)
-        }
-    }
+private val SMALL_COMPLICATION_STYLES = setOf(
+    ComplicationType.SHORT_TEXT,
+    ComplicationType.RANGED_VALUE,
+    ComplicationType.MONOCHROMATIC_IMAGE,
+)
+
+fun ComplicationType.isBig(): Boolean = this in BIG_COMPLICATION_STYLES
+fun ComplicationType.isSmall(): Boolean = this in SMALL_COMPLICATION_STYLES
+
+@DrawableRes
+fun ComplicationType.drawableId() = when {
+    this == ComplicationType.RANGED_VALUE -> R.drawable.complication_ranged
+    isBig() -> R.drawable.complication_big
+    else -> R.drawable.complication_small
 }

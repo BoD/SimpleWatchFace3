@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2023-present Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2022-present Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,23 +22,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+@file:Suppress("NOTHING_TO_INLINE")
 
-package org.jraf.android.simplewatchface3.watchface
+package org.jraf.android.simplewatchface3.util
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.lifecycle.lifecycleScope
-import androidx.wear.watchface.editor.EditorSession
-import kotlinx.coroutines.launch
+import timber.log.Timber
 
-class SimpleWatchFaceConfigurationActivity : ComponentActivity() {
-    private lateinit var editorSession: EditorSession
+fun initLogging() {
+    Timber.plant(Timber.DebugTree())
+}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycleScope.launch {
-            editorSession = EditorSession.createOnWatchEditorSession(this@SimpleWatchFaceConfigurationActivity)
-            editorSession.openComplicationDataSourceChooser(0)
-        }
-    }
+inline fun logd(tag: String, message: String) {
+    Timber.tag(tag)
+    Timber.d(message)
+}
+
+inline fun logd(message: String) {
+    Timber.d(message)
+}
+
+inline fun logd(any: Any) {
+    Timber.d(any.toString())
+}
+
+inline fun logd(throwable: Throwable) {
+    Timber.d(throwable)
+}
+
+inline fun logd(throwable: Throwable, message: String) {
+    Timber.d(throwable, message)
+}
+
+inline fun logd(throwable: Throwable, any: Any) {
+    Timber.d(throwable, any.toString())
+}
+
+inline fun logw(tag: String, message: String) {
+    Timber.tag(tag)
+    Timber.w(message)
 }

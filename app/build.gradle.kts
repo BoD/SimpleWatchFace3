@@ -55,6 +55,10 @@ android {
 
 dependencies {
     implementation(libs.wear.watchface)
+    implementation(libs.wear.watchface.complications.rendering)
+    implementation(libs.wear.watchface.editor)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.timber)
 }
 
 // To release:
