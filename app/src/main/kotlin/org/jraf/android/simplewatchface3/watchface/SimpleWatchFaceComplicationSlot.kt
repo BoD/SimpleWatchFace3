@@ -36,7 +36,8 @@ import org.jraf.android.simplewatchface3.R
 import org.jraf.android.simplewatchface3.util.isBig
 import org.jraf.android.simplewatchface3.util.isSmall
 
-private const val SMALL_COMPLICATION_DIAMETER = .33F
+private const val SMALL_COMPLICATION_DIAMETER = .30F
+private const val ADJUSTMENT = 1 / 30F
 
 private const val HALF = .5F
 private const val QUARTER = .25F
@@ -70,7 +71,7 @@ enum class SimpleWatchFaceComplicationSlot(
                 when {
                     it.isSmall() -> rectCenteredAt(
                         x = HALF,
-                        y = QUARTER,
+                        y = QUARTER + ADJUSTMENT,
                         width = SMALL_COMPLICATION_DIAMETER,
                     )
 
@@ -102,7 +103,7 @@ enum class SimpleWatchFaceComplicationSlot(
         ),
         bounds = ComplicationSlotBounds(
             rectCenteredAt(
-                x = QUARTER,
+                x = QUARTER + ADJUSTMENT,
                 y = HALF,
                 width = SMALL_COMPLICATION_DIAMETER,
             )
@@ -124,7 +125,7 @@ enum class SimpleWatchFaceComplicationSlot(
         ),
         bounds = ComplicationSlotBounds(
             rectCenteredAt(
-                x = 1F - QUARTER,
+                x = 1F - QUARTER - ADJUSTMENT,
                 y = HALF,
                 width = SMALL_COMPLICATION_DIAMETER,
             )
@@ -152,7 +153,7 @@ enum class SimpleWatchFaceComplicationSlot(
                 when {
                     it.isSmall() -> rectCenteredAt(
                         x = HALF,
-                        y = 1F - QUARTER,
+                        y = 1F - QUARTER - ADJUSTMENT,
                         width = SMALL_COMPLICATION_DIAMETER,
                     )
 

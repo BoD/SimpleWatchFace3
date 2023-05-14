@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="shadow_radius">6dp</dimen>
+    <dimen name="digits_margin_vertical">2dp</dimen>
+</resources>

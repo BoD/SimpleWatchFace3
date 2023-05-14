@@ -47,6 +47,7 @@ class SimpleWatchFaceService : WatchFaceService() {
         return WatchFace(
             watchFaceType = WatchFaceType.ANALOG,
             renderer = SimpleWatchFaceRenderer(
+                context = this,
                 surfaceHolder = surfaceHolder,
                 currentUserStyleRepository = currentUserStyleRepository,
                 watchState = watchState,
