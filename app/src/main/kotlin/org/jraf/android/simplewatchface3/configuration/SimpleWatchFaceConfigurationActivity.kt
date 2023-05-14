@@ -23,10 +23,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jraf.android.simplewatchface3.watchface
+package org.jraf.android.simplewatchface3.configuration
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
 import androidx.wear.watchface.editor.EditorSession
 import kotlinx.coroutines.launch
@@ -38,7 +39,16 @@ class SimpleWatchFaceConfigurationActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
             editorSession = EditorSession.createOnWatchEditorSession(this@SimpleWatchFaceConfigurationActivity)
-            editorSession.openComplicationDataSourceChooser(0)
+        }
+
+        setContent {
+            SimpleWatchFaceConfigurationScreen(
+                onChooseComplicationClick = { complicationSlotId ->
+                    lifecycleScope.launch {
+                        editorSession.openComplicationDataSourceChooser(complicationSlotId)
+                    }
+                }
+            )
         }
     }
 }

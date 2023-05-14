@@ -4,10 +4,20 @@ kotlin = "1.8.21"
 benManes = "0.46.0"
 
 androidx-wear-watchface = "1.1.1"
+androidx-wear-compose = "1.1.2"
+
 androidx-lifecycle = "2.6.1"
+
+# See https://developer.android.com/jetpack/androidx/releases/compose-kotlin
+androidx-compose-compiler = "1.4.7"
+
+androidx-compose = "1.4.3"
+
+androidx-activity = "1.7.1"
 
 timber = "5.0.1"
 
+horologist = "0.4.4"
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -15,10 +25,18 @@ kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 benManes = { id = "com.github.ben-manes.versions", version.ref = "benManes" }
 
 [libraries]
-wear-watchface = { module = "androidx.wear.watchface:watchface", version.ref = "androidx-wear-watchface" }
-wear-watchface-complications-rendering = { module = "androidx.wear.watchface:watchface-complications-rendering", version.ref = "androidx-wear-watchface" }
-wear-watchface-editor = { module = "androidx.wear.watchface:watchface-editor", version.ref = "androidx-wear-watchface" }
+androidx-wear-watchface = { module = "androidx.wear.watchface:watchface", version.ref = "androidx-wear-watchface" }
+androidx-wear-watchface-complications-rendering = { module = "androidx.wear.watchface:watchface-complications-rendering", version.ref = "androidx-wear-watchface" }
+androidx-wear-watchface-editor = { module = "androidx.wear.watchface:watchface-editor", version.ref = "androidx-wear-watchface" }
+androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "androidx-wear-compose" }
+androidx-wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "androidx-wear-compose" }
+
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "androidx-compose" }
+
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity" }
 
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
 
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+
+horologist-compose-layout = { group = "com.google.android.horologist", name = "horologist-compose-layout", version.ref = "horologist" }

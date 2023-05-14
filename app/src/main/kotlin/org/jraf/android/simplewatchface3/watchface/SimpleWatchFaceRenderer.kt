@@ -31,6 +31,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.view.SurfaceHolder
+import androidx.core.graphics.withSave
 import androidx.wear.watchface.CanvasType
 import androidx.wear.watchface.ComplicationSlotsManager
 import androidx.wear.watchface.DrawMode
@@ -72,6 +73,8 @@ class SimpleWatchFaceRenderer(
 
     override suspend fun createSharedAssets() = SharedAssets()
 
+    private val isInteractiveMode get() = renderParameters.drawMode == DrawMode.INTERACTIVE
+
     private val handPaint = Paint().apply {
         isAntiAlias = true
         strokeCap = Paint.Cap.ROUND
@@ -102,7 +105,11 @@ class SimpleWatchFaceRenderer(
 
     private inline fun drawComplications(canvas: Canvas, zonedDateTime: ZonedDateTime) {
         for ((_, complicationSlot) in complicationSlotsManager.complicationSlots) {
-            if (complicationSlot.enabled) {
+            if (complicationSlot.enabled &&
+                SimpleWatchFaceComplicationSlot.fromId(complicationSlot.id).shouldDraw(isInteractiveMode = isInteractiveMode)
+            ) {
+//                complicationSlot.complicationSlotBounds =
+
                 val renderer = complicationSlot.renderer as CanvasComplicationDrawable
                 val complicationType = complicationSlot.complicationData.value.type
                 renderer.drawable =
@@ -129,45 +136,44 @@ class SimpleWatchFaceRenderer(
         val minuteRotation = minute * 6F + (second / 60F) * 6F
         val hourRotation = hour * 30F + (minute / 60F) * 30F
 
-        canvas.save()
-
-        // Hour
-        handPaint.color = 0xFFFF0000.toInt()
-        handPaint.strokeWidth = HOUR_HAND_WIDTH_RATIO * screenBounds.height()
-        canvas.rotate(hourRotation, centerX, centerY)
-        canvas.drawLine(
-            centerX,
-            centerY,
-            centerX,
-            centerY - HOUR_HAND_LENGTH_RATIO * (screenBounds.height() / 2),
-            handPaint
-        )
-
-        // Minute
-        handPaint.color = 0xFF00FF00.toInt()
-        handPaint.strokeWidth = MINUTE_HAND_WIDTH_RATIO * screenBounds.height()
-        canvas.rotate(minuteRotation - hourRotation, centerX, centerY)
-        canvas.drawLine(
-            centerX,
-            centerY,
-            centerX,
-            centerY - MINUTE_HAND_LENGTH_RATIO * (screenBounds.height() / 2),
-            handPaint
-        )
-
-        // Second
-        if (renderParameters.drawMode == DrawMode.INTERACTIVE) {
-            handPaint.color = 0xFF0000FF.toInt()
-            handPaint.strokeWidth = SECOND_HAND_WIDTH_RATIO * screenBounds.height()
-            canvas.rotate(secondRotation - minuteRotation, centerX, centerY)
+        canvas.withSave {
+            // Hour
+            handPaint.color = 0xFFFF0000.toInt()
+            handPaint.strokeWidth = HOUR_HAND_WIDTH_RATIO * screenBounds.height()
+            canvas.rotate(hourRotation, centerX, centerY)
             canvas.drawLine(
                 centerX,
-                centerY + SECOND_HAND_LENGTH_RATIO * (screenBounds.height() / 20),
+                centerY,
                 centerX,
-                centerY - SECOND_HAND_LENGTH_RATIO * (screenBounds.height() / 2),
+                centerY - HOUR_HAND_LENGTH_RATIO * (screenBounds.height() / 2),
                 handPaint
             )
+
+            // Minute
+            handPaint.color = 0xFF00FF00.toInt()
+            handPaint.strokeWidth = MINUTE_HAND_WIDTH_RATIO * screenBounds.height()
+            canvas.rotate(minuteRotation - hourRotation, centerX, centerY)
+            canvas.drawLine(
+                centerX,
+                centerY,
+                centerX,
+                centerY - MINUTE_HAND_LENGTH_RATIO * (screenBounds.height() / 2),
+                handPaint
+            )
+
+            // Second
+            if (isInteractiveMode) {
+                handPaint.color = 0xFF0000FF.toInt()
+                handPaint.strokeWidth = SECOND_HAND_WIDTH_RATIO * screenBounds.height()
+                canvas.rotate(secondRotation - minuteRotation, centerX, centerY)
+                canvas.drawLine(
+                    centerX,
+                    centerY + SECOND_HAND_LENGTH_RATIO * (screenBounds.height() / 20),
+                    centerX,
+                    centerY - SECOND_HAND_LENGTH_RATIO * (screenBounds.height() / 2),
+                    handPaint
+                )
+            }
         }
     }
-
 }

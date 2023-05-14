@@ -37,6 +37,14 @@ android {
         }
     }
 
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -54,10 +62,19 @@ android {
 }
 
 dependencies {
-    implementation(libs.wear.watchface)
-    implementation(libs.wear.watchface.complications.rendering)
-    implementation(libs.wear.watchface.editor)
+    implementation(libs.androidx.wear.watchface)
+    implementation(libs.androidx.wear.watchface.complications.rendering)
+    implementation(libs.androidx.wear.watchface.editor)
+    implementation(libs.androidx.wear.compose.material)
+    implementation(libs.androidx.wear.compose.foundation)
+
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+
     implementation(libs.androidx.lifecycle.runtime.ktx)
+
+//    implementation(libs.horologist.compose.layout)
+
     implementation(libs.timber)
 }
 

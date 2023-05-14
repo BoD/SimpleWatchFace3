@@ -14,7 +14,8 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.DeviceDefault">
 
         <meta-data
             android:name="com.google.android.wearable.standalone"
@@ -50,7 +51,7 @@
         </service>
 
         <activity
-            android:name=".watchface.SimpleWatchFaceConfigurationActivity"
+            android:name=".configuration.SimpleWatchFaceConfigurationActivity"
             android:exported="true"
             android:label="@string/watchface_configureActivity_title">
 

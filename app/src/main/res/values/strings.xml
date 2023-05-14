@@ -2,4 +2,8 @@
     <string name="app_name">SimpleWatchFace3</string>
     <string name="watchface_name">@string/app_name</string>
     <string name="watchface_configureActivity_title">Configure</string>
+    <string name="complicationSlot_top">Top</string>
+    <string name="complicationSlot_left">Left</string>
+    <string name="complicationSlot_right">Right</string>
+    <string name="complicationSlot_bottom">Bottom</string>
 </resources>

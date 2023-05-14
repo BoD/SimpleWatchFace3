@@ -25,25 +25,17 @@
 
 package org.jraf.android.simplewatchface3.watchface
 
-import android.graphics.RectF
 import android.view.SurfaceHolder
 import androidx.wear.watchface.CanvasComplicationFactory
-import androidx.wear.watchface.ComplicationSlot
+import androidx.wear.watchface.ComplicationSlot.Companion.createRoundRectComplicationSlotBuilder
 import androidx.wear.watchface.ComplicationSlotsManager
 import androidx.wear.watchface.WatchFace
 import androidx.wear.watchface.WatchFaceService
 import androidx.wear.watchface.WatchFaceType
 import androidx.wear.watchface.WatchState
-import androidx.wear.watchface.complications.ComplicationSlotBounds
-import androidx.wear.watchface.complications.DefaultComplicationDataSourcePolicy
-import androidx.wear.watchface.complications.SystemDataSources
-import androidx.wear.watchface.complications.data.ComplicationExperimental
-import androidx.wear.watchface.complications.data.ComplicationType
 import androidx.wear.watchface.complications.rendering.CanvasComplicationDrawable
 import androidx.wear.watchface.complications.rendering.ComplicationDrawable
 import androidx.wear.watchface.style.CurrentUserStyleRepository
-import org.jraf.android.simplewatchface3.util.isBig
-import org.jraf.android.simplewatchface3.util.isSmall
 
 class SimpleWatchFaceService : WatchFaceService() {
     override suspend fun createWatchFace(
@@ -63,7 +55,6 @@ class SimpleWatchFaceService : WatchFaceService() {
         )
     }
 
-    @OptIn(ComplicationExperimental::class)
     override fun createComplicationSlotsManager(currentUserStyleRepository: CurrentUserStyleRepository): ComplicationSlotsManager {
         val canvasComplicationFactory = CanvasComplicationFactory { watchState, invalidateCallback ->
             CanvasComplicationDrawable(
@@ -74,50 +65,15 @@ class SimpleWatchFaceService : WatchFaceService() {
         }
 
         return ComplicationSlotsManager(
-            complicationSlotCollection = setOf(
-                ComplicationSlot.createRoundRectComplicationSlotBuilder(
-                    id = 0,
+            complicationSlotCollection = SimpleWatchFaceComplicationSlot.values().map { slot ->
+                createRoundRectComplicationSlotBuilder(
+                    id = slot.id,
                     canvasComplicationFactory = canvasComplicationFactory,
-                    supportedTypes = listOf(
-                        ComplicationType.RANGED_VALUE,
-                        ComplicationType.LONG_TEXT,
-                        ComplicationType.SHORT_TEXT,
-                        ComplicationType.MONOCHROMATIC_IMAGE,
-                        ComplicationType.LIST,
-                    ),
-                    defaultDataSourcePolicy = DefaultComplicationDataSourcePolicy(
-                        systemDataSource = SystemDataSources.DATA_SOURCE_DAY_AND_DATE,
-                        systemDataSourceDefaultType = ComplicationType.SHORT_TEXT
-                    ),
-                    bounds = ComplicationSlotBounds(
-                        ComplicationType.values().associateWith {
-                            when {
-                                it.isSmall() -> RectF(
-                                    .5f - .125F,
-                                    .125F,
-                                    .5f + .125F,
-                                    .125F + .25F,
-                                )
-
-                                it.isBig() -> RectF(
-                                    .125F,
-                                    .125F,
-                                    1F - .125F,
-                                    .125F + .25F,
-                                )
-
-                                else -> RectF(
-                                    0F,
-                                    0F,
-                                    0F,
-                                    0F,
-                                )
-                            }
-                        }
-                    )
-                )
-                    .build()
-            ),
+                    supportedTypes = slot.supportedTypes,
+                    defaultDataSourcePolicy = slot.defaultDataSourcePolicy,
+                    bounds = slot.bounds
+                ).build()
+            },
             currentUserStyleRepository = currentUserStyleRepository,
         )
     }
