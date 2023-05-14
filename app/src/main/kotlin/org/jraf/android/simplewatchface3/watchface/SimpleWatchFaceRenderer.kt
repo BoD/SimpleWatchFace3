@@ -31,6 +31,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.view.SurfaceHolder
+import android.view.animation.OvershootInterpolator
 import androidx.core.graphics.withSave
 import androidx.wear.watchface.CanvasType
 import androidx.wear.watchface.ComplicationSlotsManager
@@ -43,7 +44,7 @@ import androidx.wear.watchface.style.CurrentUserStyleRepository
 import org.jraf.android.simplewatchface3.util.drawableId
 import java.time.ZonedDateTime
 
-private const val INTERACTIVE_DRAW_MODE_UPDATE_DELAY_MILLIS = 1000L
+private const val INTERACTIVE_DRAW_MODE_UPDATE_DELAY_MILLIS = 16L
 
 private const val HOUR_HAND_LENGTH_RATIO = .6F
 private const val HOUR_HAND_WIDTH_RATIO = .02F
@@ -53,6 +54,9 @@ private const val MINUTE_HAND_WIDTH_RATIO = .01F
 
 private const val SECOND_HAND_LENGTH_RATIO = .9F
 private const val SECOND_HAND_WIDTH_RATIO = .006F
+
+private const val SECOND_HAND_ANIMATION_TIME_FRACTION = .92F
+private val SECOND_HAND_ANIMATION_INTERPOLATOR = OvershootInterpolator(2F)
 
 class SimpleWatchFaceRenderer(
     surfaceHolder: SurfaceHolder,
@@ -128,13 +132,21 @@ class SimpleWatchFaceRenderer(
     }
 
     private inline fun drawHands(canvas: Canvas, zonedDateTime: ZonedDateTime) {
-        val second = zonedDateTime.second
-        val minute = zonedDateTime.minute
         val hour = zonedDateTime.hour
+        val minute = zonedDateTime.minute
+        val second = zonedDateTime.second
+        val secondFraction = zonedDateTime.nano / 1_000_000_000F
 
-        val secondRotation = second * 6F
-        val minuteRotation = minute * 6F + (second / 60F) * 6F
         val hourRotation = hour * 30F + (minute / 60F) * 30F
+        val minuteRotation = minute * 6F + (second / 60F) * 6F
+        val secondRotation = second * 6F +
+                if (secondFraction > SECOND_HAND_ANIMATION_TIME_FRACTION) {
+                    val animationFraction =
+                        (secondFraction - SECOND_HAND_ANIMATION_TIME_FRACTION) * (1F / (1F - SECOND_HAND_ANIMATION_TIME_FRACTION))
+                    SECOND_HAND_ANIMATION_INTERPOLATOR.getInterpolation(animationFraction)
+                } else {
+                    0F
+                } * 6F
 
         canvas.withSave {
             // Hour
