@@ -97,6 +97,7 @@ class SimpleWatchFaceRenderer(
         isSubpixelText = true // <- not sure about this one
         textAlign = Paint.Align.CENTER
         typeface = Typeface.createFromAsset(context.assets, "fonts/Oswald-Medium.ttf")
+        setTextSkewX(-0.1f);
     }
 
     private val handPaint = Paint().apply {
