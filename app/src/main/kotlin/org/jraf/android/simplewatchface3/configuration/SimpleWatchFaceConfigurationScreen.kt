@@ -25,12 +25,21 @@
 
 package org.jraf.android.simplewatchface3.configuration
 
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.res.stringResource
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
+import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.ScalingLazyColumn
 import androidx.wear.compose.material.ScalingLazyListAnchorType
@@ -41,6 +50,7 @@ import androidx.wear.compose.material.VignettePosition
 import androidx.wear.compose.material.items
 import androidx.wear.compose.material.rememberScalingLazyListState
 import androidx.wear.compose.material.scrollAway
+import kotlinx.coroutines.launch
 import org.jraf.android.simplewatchface3.watchface.SimpleWatchFaceComplicationSlot
 
 @Composable
@@ -49,8 +59,22 @@ fun SimpleWatchFaceConfigurationScreen(onChooseComplicationClick: (Int) -> Unit)
     Scaffold(
         timeText = { TimeText(Modifier.scrollAway(scalingLazyListState)) },
         vignette = { Vignette(VignettePosition.TopAndBottom) },
+        positionIndicator = {
+            PositionIndicator(scalingLazyListState = scalingLazyListState)
+        },
     ) {
+        val coroutineScope = rememberCoroutineScope()
+        val focusRequester = remember { FocusRequester() }
         ScalingLazyColumn(
+            modifier = Modifier
+                .onRotaryScrollEvent {
+                    coroutineScope.launch {
+                        scalingLazyListState.scrollBy(it.verticalScrollPixels)
+                    }
+                    true
+                }
+                .focusRequester(focusRequester)
+                .focusable(),
             state = scalingLazyListState,
             anchorType = ScalingLazyListAnchorType.ItemStart,
         ) {
@@ -65,5 +89,6 @@ fun SimpleWatchFaceConfigurationScreen(onChooseComplicationClick: (Int) -> Unit)
                 )
             }
         }
+        LaunchedEffect(Unit) { focusRequester.requestFocus() }
     }
 }
