@@ -28,26 +28,41 @@ package org.jraf.android.simplewatchface3.configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.lifecycleScope
 import androidx.wear.watchface.editor.EditorSession
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class SimpleWatchFaceConfigurationActivity : ComponentActivity() {
     private lateinit var editorSession: EditorSession
+    private val editorSessionInitialized = MutableStateFlow(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
             editorSession = EditorSession.createOnWatchEditorSession(this@SimpleWatchFaceConfigurationActivity)
+            editorSessionInitialized.value = true
         }
 
         setContent {
+            val editorSessionInitialized by editorSessionInitialized.collectAsState(false)
+            if (!editorSessionInitialized) {
+                return@setContent
+            }
+
+            val complicationsDataSourceInfo by editorSession.complicationsDataSourceInfo.collectAsState(emptyMap())
             SimpleWatchFaceConfigurationScreen(
+                accentColor = Color(0xFF00FF00),
+                complicationsDataSourceInfo = complicationsDataSourceInfo,
                 onChooseComplicationClick = { complicationSlotId ->
                     lifecycleScope.launch {
                         editorSession.openComplicationDataSourceChooser(complicationSlotId)
                     }
-                }
+                },
+                onPickAccentColorClick = {},
             )
         }
     }

@@ -6,4 +6,7 @@
     <string name="complicationSlot_left">Left</string>
     <string name="complicationSlot_right">Right</string>
     <string name="complicationSlot_bottom">Bottom</string>
+    <string name="configuration_accentColor">Accent color</string>
+    <string name="configuration_complications">Complications</string>
+    <string name="configuration_colors">Colors</string>
 </resources>

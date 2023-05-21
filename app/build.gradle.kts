@@ -75,6 +75,9 @@ dependencies {
 
 //    implementation(libs.horologist.compose.layout)
 
+    implementation(libs.androidx.core.ktx)
+
+
     implementation(libs.timber)
 }
 
