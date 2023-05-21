@@ -77,6 +77,8 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
 
+    implementation(libs.jraf.kprefs)
+    implementation(libs.jraf.wearColorPicker)
 
     implementation(libs.timber)
 }

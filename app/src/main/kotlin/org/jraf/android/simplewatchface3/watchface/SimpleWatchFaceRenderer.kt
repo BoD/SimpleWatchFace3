@@ -45,6 +45,7 @@ import androidx.wear.watchface.complications.rendering.CanvasComplicationDrawabl
 import androidx.wear.watchface.complications.rendering.ComplicationDrawable
 import androidx.wear.watchface.style.CurrentUserStyleRepository
 import org.jraf.android.simplewatchface3.R
+import org.jraf.android.simplewatchface3.configuration.Settings
 import org.jraf.android.simplewatchface3.util.drawableId
 import java.time.ZonedDateTime
 import kotlin.math.PI
@@ -87,6 +88,8 @@ class SimpleWatchFaceRenderer(
     class SharedAssets : Renderer.SharedAssets {
         override fun onDestroy() {}
     }
+
+    private val settings = Settings(context)
 
     override suspend fun createSharedAssets() = SharedAssets()
 
@@ -132,8 +135,7 @@ class SimpleWatchFaceRenderer(
     }
 
     private inline fun drawBackground(canvas: Canvas) {
-//        canvas.drawColor(Color.BLACK)
-        canvas.drawColor(Color.DKGRAY)
+        canvas.drawColor(Color.BLACK)
 
     }
 
@@ -159,7 +161,7 @@ class SimpleWatchFaceRenderer(
             val textHeight = numberHeights[numberIndex]!!
             val cx = sin(angle) * dialRadius + centerX
             val cy = -cos(angle) * dialRadius + centerY
-            dialPaint.color = Color.YELLOW
+            dialPaint.color = settings.accentColor.value
             dialPaint.textSize = screenBounds.width() * (if (numberIndex % 3 == 0) NUMBER_MAJOR_SIZE_RATIO else NUMBER_MINOR_SIZE_RATIO)
             canvas.drawText(
                 text,
@@ -183,9 +185,9 @@ class SimpleWatchFaceRenderer(
                         id = complicationType.drawableId()
                     )!!
                         .apply {
-                            activeStyle.borderColor = 0xFFFF0000.toInt()
-                            activeStyle.rangedValuePrimaryColor = 0xFFFF0000.toInt()
-                            activeStyle.rangedValueSecondaryColor = 0x4DFF0000
+                            val accentColor = settings.accentColor.value
+                            activeStyle.rangedValuePrimaryColor = accentColor
+                            activeStyle.rangedValueSecondaryColor = 0x4DFFFFFF and accentColor
                         }
                 complicationSlot.render(canvas, zonedDateTime, renderParameters)
             }
@@ -211,7 +213,7 @@ class SimpleWatchFaceRenderer(
 
         canvas.withSave {
             // Hour
-            handPaint.color = 0xFFFF0000.toInt()
+            handPaint.color = Color.WHITE
             handPaint.strokeWidth = HOUR_HAND_WIDTH_RATIO * screenBounds.height()
             canvas.rotate(hourRotation, centerX, centerY)
             canvas.drawLine(
@@ -223,7 +225,7 @@ class SimpleWatchFaceRenderer(
             )
 
             // Minute
-            handPaint.color = 0xFF00FF00.toInt()
+            handPaint.color = Color.WHITE
             handPaint.strokeWidth = MINUTE_HAND_WIDTH_RATIO * screenBounds.height()
             canvas.rotate(minuteRotation - hourRotation, centerX, centerY)
             canvas.drawLine(
@@ -236,7 +238,7 @@ class SimpleWatchFaceRenderer(
 
             // Second
             if (isInteractiveMode) {
-                handPaint.color = 0xFF0000FF.toInt()
+                handPaint.color = settings.accentColor.value
                 handPaint.strokeWidth = SECOND_HAND_WIDTH_RATIO * screenBounds.height()
                 canvas.rotate(secondRotation - minuteRotation, centerX, centerY)
                 canvas.drawLine(

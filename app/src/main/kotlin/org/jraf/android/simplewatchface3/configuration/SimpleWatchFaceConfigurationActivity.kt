@@ -27,21 +27,31 @@ package org.jraf.android.simplewatchface3.configuration
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.lifecycleScope
 import androidx.wear.watchface.editor.EditorSession
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import org.jraf.android.androidwearcolorpicker.ColorPickActivity
 
 class SimpleWatchFaceConfigurationActivity : ComponentActivity() {
     private lateinit var editorSession: EditorSession
     private val editorSessionInitialized = MutableStateFlow(false)
+    private lateinit var settings: Settings
+    private lateinit var accentColor: Flow<Color>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        settings = Settings(this)
+        accentColor = settings.accentColor.map { colorInt -> Color(colorInt) }
+
         lifecycleScope.launch {
             editorSession = EditorSession.createOnWatchEditorSession(this@SimpleWatchFaceConfigurationActivity)
             editorSessionInitialized.value = true
@@ -53,16 +63,26 @@ class SimpleWatchFaceConfigurationActivity : ComponentActivity() {
                 return@setContent
             }
 
+            val accentColor by accentColor.collectAsState(Color(Settings.DEFAULT_ACCENT_COLOR))
+
+            val colorPickLauncher = rememberLauncherForActivityResult(contract = ColorPickActivity.Contract()) { pickedColorResult ->
+                if (pickedColorResult != null) {
+                    settings.accentColor.value = pickedColorResult.pickedColor
+                }
+            }
+
             val complicationsDataSourceInfo by editorSession.complicationsDataSourceInfo.collectAsState(emptyMap())
             SimpleWatchFaceConfigurationScreen(
-                accentColor = Color(0xFF00FF00),
+                accentColor = accentColor,
                 complicationsDataSourceInfo = complicationsDataSourceInfo,
                 onChooseComplicationClick = { complicationSlotId ->
                     lifecycleScope.launch {
                         editorSession.openComplicationDataSourceChooser(complicationSlotId)
                     }
                 },
-                onPickAccentColorClick = {},
+                onPickAccentColorClick = {
+                    colorPickLauncher.launch(ColorPickActivity.Contract.PickRequest(accentColor.toArgb()))
+                }
             )
         }
     }

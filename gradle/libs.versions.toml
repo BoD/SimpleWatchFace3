@@ -17,6 +17,9 @@ androidx-activity = "1.7.1"
 
 androidx-core-ktx = "1.10.1"
 
+kprefs = "1.7.0"
+jraf-wearColorPicker = "3.0.0"
+
 timber = "5.0.1"
 
 #horologist = "0.4.7"
@@ -40,6 +43,10 @@ androidx-activity-compose = { group = "androidx.activity", name = "activity-comp
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
 
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
+
+jraf-wearColorPicker = { group = "org.jraf", name = "android-wear-color-picker", version.ref = "jraf-wearColorPicker" }
+
+jraf-kprefs = { group = "org.jraf", name = "kprefs", version.ref = "kprefs" }
 
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 
