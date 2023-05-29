@@ -11,7 +11,7 @@ android {
         applicationId = "org.jraf.android.simplewatchface3"
         minSdk = 30
         targetSdk = 33
-        versionCode = 1
+        versionCode = 3
         versionName = "1.0.0"
     }
 
