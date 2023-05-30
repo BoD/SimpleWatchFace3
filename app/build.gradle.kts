@@ -11,7 +11,7 @@ android {
         applicationId = "org.jraf.android.simplewatchface3"
         minSdk = 30
         targetSdk = 33
-        versionCode = 3
+        versionCode = 4
         versionName = "1.0.0"
     }
 
@@ -32,7 +32,9 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+
+            // proguard-android-optimize.txt seem to break observability from kprefs! Not sure why.
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
         }
     }
